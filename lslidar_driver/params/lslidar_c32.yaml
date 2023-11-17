@@ -6,12 +6,12 @@
     difop_port: 2369
     pcl_type: false
     lidar_type: c32                 # 雷达类型  c1/c8/c16/c32
-    c32_type: c32_32                # c32_32: 垂直角度是的30度c32   c32_70: 垂直角度是的70度c32(c32w)  c32_90: 垂直角度是的90度c32(ch32w)
+    c32_type: c32_70              # c32_32: 垂直角度是的30度c32   c32_70: 垂直角度是的70度c32(c32w)  c32_90: 垂直角度是的90度c32(ch32w)
     add_multicast: false
     group_ip: 224.1.1.2
     use_gps_ts: false
     min_range: 0.3
-    max_range: 200.0
+    max_range: 160.0
     frame_id: laser_link
     distance_unit: 0.4
     angle_disable_min: 0
