@@ -5,12 +5,19 @@ from launch_ros.actions import LifecycleNode, ComposableNodeContainer
 from launch_ros.descriptions import ComposableNode
 from launch.substitutions import LaunchConfiguration
 
+from launch.events.process.process_started import ProcessStarted
+from launch.event_handlers.on_process_start import OnProcessStart
+from launch.actions import RegisterEventHandler
+from launch.launch_context import LaunchContext
+
 from launch.actions import (
     DeclareLaunchArgument,
 )
 
 import os
 import subprocess
+import time
+import threading
 
 lslidar_filter_params_file = LaunchConfiguration("lslidar_filter_params_file")
 
@@ -61,6 +68,22 @@ def generate_launch_description():
                         ),
                     ],
                 )
+    
+    def reniceness_execute():
+        time.sleep(10)
+        print(f"Renicing map optimization node in localization")
+        cmd = "ps -eLf | grep 'lslidar_driver_node' | grep -v grep | awk '{print $4}' | xargs -r -n1 renice -20 -p 1> /dev/null"
+        subprocess.call(cmd, shell=True)
+
+    def renicesness_lslidar_driver(event: ProcessStarted, context: LaunchContext):
+        # Start a new thread to run the command only if this is a restart
+        if "lslidar_driver_node" in " ".join(event.action.cmd):
+            threading.Thread(target=reniceness_execute).start()
+
+    renicesness_lslidar_driver_event_handler = RegisterEventHandler(
+        event_handler=OnProcessStart(on_start=renicesness_lslidar_driver)
+    )
+
 
     return LaunchDescription([
         DeclareLaunchArgument(
@@ -74,4 +97,5 @@ def generate_launch_description():
         ),
         driver_node,
         lslidar_crop_box_container,
+        renicesness_lslidar_driver_event_handler,
     ])

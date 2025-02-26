@@ -1,7 +1,7 @@
 /c32/lslidar_driver_node:
   ros__parameters:
     packet_rate: 1695.0
-    device_ip: 192.168.1.200
+    device_ip: 192.168.50.200
     msop_port: 2368
     difop_port: 2369
     pcl_type: false
